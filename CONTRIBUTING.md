@@ -38,4 +38,4 @@ Acesse `http://localhost:4567` no navegador para debugar com as Ferramentas do D
 
 - **Frontend:** HTML5 semântico, JavaScript ES6+ modular, CSS moderno com variáveis nativas e backdrop-filter.
 - **Backend:** Node.js puro utilizando bibliotecas nativas (`http`, `fs`, `path`, `os`, `child_process`) para manter a imagem leve e sem dependência de `node_modules`.
-- **Ícones:** Sempre utilize SVGs vetoriais puros registrados em `shell/src/icons.js` (evite emojis como ícones de sistema).
+- **Ícones:** Sempre utilize SVGs vetoriais puros registrados em `shell/src/icons.js`.
