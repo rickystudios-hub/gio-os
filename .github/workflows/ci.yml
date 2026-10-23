@@ -1,0 +1,35 @@
+name: GIO Os CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validar Sintaxe dos Scripts Bash
+        run: |
+          bash -n build/build-iso.sh
+          bash -n test-qemu.sh
+          bash -n run-gio-os.sh
+
+      - name: Validar Sintaxe do Backend Node.js
+        run: |
+          node -c server/backend.js
+
+      - name: Validar Sintaxe do Frontend JavaScript
+        run: |
+          node -c shell/src/icons.js
+          node -c shell/src/vfs.js
+          node -c shell/src/app.js

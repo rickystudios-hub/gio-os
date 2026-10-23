@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GIO Os - Next-Gen Linux Desktop</title>
+  
+  <!-- Fontes Google (Plus Jakarta Sans & JetBrains Mono) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Estilos principais do GIO Shell -->
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+
+  <!-- DESKTOP VIEWPORT -->
+  <main id="desktop-viewport">
+
+    <!-- CAMADA INDEPENDENTE DE PAPEL DE PAREDE (Permite desfoque sem borrar o Launchpad ou janelas) -->
+    <div id="desktop-wallpaper"></div>
+
+    <!-- ========================================================
+         1. TOP STATUS BAR
+    ======================================================== -->
+    <header id="top-bar">
+      <!-- Esquerda: Marca GIO e Workspaces -->
+      <div class="topbar-left">
+        <button class="topbar-btn brand-btn" id="gio-menu-btn" title="Menu GIO / Launchpad (Super)">
+          <span class="brand-icon" style="display:flex;align-items:center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M12 3a9 9 0 0 1 9 9"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </span>
+          <span>GIO</span>
+        </button>
+
+        <div class="workspaces-pill">
+          <div class="ws-dot active" data-ws="1">1</div>
+          <div class="ws-dot" data-ws="2">2</div>
+          <div class="ws-dot" data-ws="3">3</div>
+          <div class="ws-dot" data-ws="4">4</div>
+        </div>
+
+        <button class="topbar-btn live-install-badge" id="live-install-trigger" title="Modo Live • Clique para Instalar no Disco">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v8"></path><path d="m8 12 4 4 4-4"></path></svg>
+          <span>Instalar GIO Os</span>
+        </button>
+      </div>
+
+      <!-- Centro: Relógio e Data -->
+      <div class="topbar-center">
+        <button class="topbar-btn" id="clock-trigger">
+          Carregando...
+        </button>
+      </div>
+
+      <!-- Direita: Status de Rede, Áudio, Bateria e Central de Controle -->
+      <div class="topbar-right">
+        <button class="topbar-btn status-pill" id="control-center-trigger" title="Central de Controle">
+          <!-- Ícone Wi-Fi -->
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+            <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+            <line x1="12" y1="20" x2="12.01" y2="20"></line>
+          </svg>
+          <!-- Ícone Volume -->
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+          <!-- Ícone Bateria -->
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="6" width="18" height="12" rx="2" ry="2"></rect>
+            <line x1="23" y1="13" x2="23" y2="11"></line>
+            <line x1="5" y1="10" x2="13" y2="10" stroke="#10b981" stroke-width="4"></line>
+          </svg>
+        </button>
+
+        <div class="avatar-badge" title="Usuário: gio">G</div>
+      </div>
+    </header>
+
+
+    <!-- ========================================================
+         2. CAMADA DE JANELAS (WINDOW MANAGER)
+    ======================================================== -->
+    <section id="windows-layer"></section>
+
+
+    <!-- ========================================================
+         3. DOCK FLUTUANTE
+    ======================================================== -->
+    <nav id="dock-container">
+      <!-- Launchpad / Menu -->
+      <div class="dock-item" id="dock-launchpad" title="Launchpad">
+        <div class="dock-tooltip">Launchpad</div>
+        <div class="dock-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+            <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+            <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Arquivos -->
+      <div class="dock-item" data-app="files">
+        <div class="dock-tooltip">Arquivos</div>
+        <div class="dock-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+          </svg>
+        </div>
+        <div class="dock-running-dot"></div>
+      </div>
+
+      <!-- Terminal -->
+      <div class="dock-item running" data-app="terminal">
+        <div class="dock-tooltip">Terminal GIO</div>
+        <div class="dock-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2">
+            <polyline points="4 17 10 11 4 5"></polyline>
+            <line x1="12" y1="19" x2="20" y2="19"></line>
+          </svg>
+        </div>
+        <div class="dock-running-dot"></div>
+      </div>
+
+      <!-- Navegador Web -->
+      <div class="dock-item" data-app="browser">
+        <div class="dock-tooltip">Navegador</div>
+        <div class="dock-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+        </div>
+        <div class="dock-running-dot"></div>
+      </div>
+
+      <!-- Monitor do Sistema -->
+      <div class="dock-item" data-app="monitor">
+        <div class="dock-tooltip">Monitor de Recursos</div>
+        <div class="dock-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+        </div>
+        <div class="dock-running-dot"></div>
+      </div>
+
+      <div class="dock-separator"></div>
+
+      <!-- Configurações -->
+      <div class="dock-item" data-app="settings">
+        <div class="dock-tooltip">Configurações</div>
+        <div class="dock-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </div>
+        <div class="dock-running-dot"></div>
+      </div>
+
+      <!-- Instalador do GIO Os -->
+      <div class="dock-item" data-app="installer" id="dock-installer" title="Instalar GIO Os no Disco">
+        <div class="dock-tooltip">Instalar GIO Os</div>
+        <div class="dock-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 8v8"></path>
+            <path d="m8 12 4 4 4-4"></path>
+          </svg>
+        </div>
+        <div class="dock-running-dot"></div>
+      </div>
+    </nav>
+
+
+    <!-- ========================================================
+         4. CENTRAL DE CONTROLE (QUICK SETTINGS POPOVER)
+    ======================================================== -->
+    <div id="control-center-popover" class="os-popover">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-weight: 700; font-size: 14px; letter-spacing: 0.3px;">Central de Controle</span>
+        <button id="lock-btn-trigger" style="background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 12px;" title="Bloquear Sessão (Super + L)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          Bloquear
+        </button>
+      </div>
+
+      <!-- Grade de Ajustes Rápidos -->
+      <div class="quick-tiles-grid">
+        <div class="quick-tile active" id="tile-wifi">
+          <div class="quick-tile-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>
+          </div>
+          <div class="quick-tile-text">
+            <span class="quick-tile-title">Wi-Fi</span>
+            <span class="quick-tile-sub">GIO_Fiber_5G</span>
+          </div>
+        </div>
+
+        <div class="quick-tile active" id="tile-bluetooth">
+          <div class="quick-tile-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 7 17 17 12 22 12 2 17 7 7 17"></polyline></svg>
+          </div>
+          <div class="quick-tile-text">
+            <span class="quick-tile-title">Bluetooth</span>
+            <span class="quick-tile-sub">Ativado</span>
+          </div>
+        </div>
+
+        <div class="quick-tile" id="tile-darkmode">
+          <div class="quick-tile-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          </div>
+          <div class="quick-tile-text">
+            <span class="quick-tile-title">Tema</span>
+            <span class="quick-tile-sub">Alternar</span>
+          </div>
+        </div>
+
+        <div class="quick-tile" id="tile-dnd">
+          <div class="quick-tile-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path><line x1="2" y1="2" x2="22" y2="22"></line></svg>
+          </div>
+          <div class="quick-tile-text">
+            <span class="quick-tile-title">Não Perturbe</span>
+            <span class="quick-tile-sub">Desativado</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sliders de Brilho e Som -->
+      <div class="slider-group">
+        <div class="slider-row">
+          <span style="display:flex;align-items:center;color:var(--text-muted);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line></svg>
+          </span>
+          <input type="range" class="os-slider" id="slider-brightness" min="40" max="120" value="100">
+        </div>
+        <div class="slider-row">
+          <span style="display:flex;align-items:center;color:var(--text-muted);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+          </span>
+          <input type="range" class="os-slider" id="slider-volume" min="0" max="100" value="75">
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ========================================================
+         5. LAUNCHPAD / APP DRAWER (FULLSCREEN OVERLAY)
+    ======================================================== -->
+    <div id="launchpad-overlay">
+      <!-- Cabeçalho do Launchpad com Barra de Busca e Botão Fechar -->
+      <div class="launchpad-header">
+        <div class="launchpad-search-wrapper">
+          <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="launchpad-search-input" class="launchpad-search" placeholder="Pesquisar aplicativos ou comandos..." autocomplete="off">
+          <span class="launchpad-esc-badge">ESC</span>
+        </div>
+        <button id="launchpad-close-btn" class="launchpad-close-btn" title="Fechar Launchpad (Esc)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <!-- Grade de Aplicativos Estilo macOS / iPadOS -->
+      <div class="launchpad-grid">
+        <!-- Terminal -->
+        <div class="launchpad-item" data-app="terminal">
+          <div class="launchpad-icon-box app-color-terminal">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="4 17 10 11 4 5"></polyline>
+              <line x1="12" y1="19" x2="20" y2="19"></line>
+            </svg>
+          </div>
+          <span class="launchpad-label">Terminal</span>
+        </div>
+
+        <!-- Arquivos -->
+        <div class="launchpad-item" data-app="files">
+          <div class="launchpad-icon-box app-color-files">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </div>
+          <span class="launchpad-label">Arquivos</span>
+        </div>
+
+        <!-- Navegador Web -->
+        <div class="launchpad-item" data-app="browser">
+          <div class="launchpad-icon-box app-color-browser">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+          </div>
+          <span class="launchpad-label">Navegador</span>
+        </div>
+
+        <!-- Monitor do Sistema -->
+        <div class="launchpad-item" data-app="monitor">
+          <div class="launchpad-icon-box app-color-monitor">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#f43f5e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+          </div>
+          <span class="launchpad-label">Monitor</span>
+        </div>
+
+        <!-- Configurações -->
+        <div class="launchpad-item" data-app="settings">
+          <div class="launchpad-icon-box app-color-settings">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </div>
+          <span class="launchpad-label">Configurações</span>
+        </div>
+
+        <!-- Central de Softwares / App Store -->
+        <div class="launchpad-item" data-app="store">
+          <div class="launchpad-icon-box app-color-store">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+          </div>
+          <span class="launchpad-label">App Store</span>
+        </div>
+
+        <!-- Editor de Código (GIO Studio) -->
+        <div class="launchpad-item" data-app="code">
+          <div class="launchpad-icon-box app-color-code">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#818cf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+          </div>
+          <span class="launchpad-label">GIO Studio</span>
+        </div>
+
+        <!-- Mídia / Música -->
+        <div class="launchpad-item" data-app="music">
+          <div class="launchpad-icon-box app-color-music">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#ec4899" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18V5l12-2v13"></path>
+              <circle cx="6" cy="18" r="3"></circle>
+              <circle cx="18" cy="16" r="3"></circle>
+            </svg>
+          </div>
+          <span class="launchpad-label">Música</span>
+        </div>
+
+        <!-- Calculadora -->
+        <div class="launchpad-item" data-app="calc">
+          <div class="launchpad-icon-box app-color-calc">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+              <line x1="8" y1="6" x2="16" y2="6"></line>
+              <line x1="16" y1="14" x2="16" y2="18"></line>
+              <path d="M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M8 18h.01M12 18h.01"></path>
+            </svg>
+          </div>
+          <span class="launchpad-label">Calculadora</span>
+        </div>
+
+        <!-- Galeria / Imagens -->
+        <div class="launchpad-item" data-app="gallery">
+          <div class="launchpad-icon-box app-color-gallery">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+          </div>
+          <span class="launchpad-label">Galeria</span>
+        </div>
+
+        <!-- Instalador do Sistema -->
+        <div class="launchpad-item" data-app="installer">
+          <div class="launchpad-icon-box app-color-installer">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M12 8v8"></path>
+              <path d="m8 12 4 4 4-4"></path>
+            </svg>
+          </div>
+          <span class="launchpad-label">Instalar GIO Os</span>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ========================================================
+         6. TELA DE BLOQUEIO / LOCK SCREEN
+    ======================================================== -->
+    <div id="lockscreen-overlay">
+      <div class="lock-clock" id="lock-clock-display">00:00</div>
+      <div class="lock-date" id="lock-date-display">Carregando data...</div>
+
+      <div class="lock-user-card">
+        <div class="lock-avatar">G</div>
+        <div class="lock-username">Richard (gio)</div>
+        <button class="lock-unlock-btn" id="lock-unlock-btn" style="display: flex; align-items: center; gap: 8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+          Desbloquear GIO Os
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Módulos do GIO Shell -->
+  <script src="src/icons.js"></script>
+  <script src="src/vfs.js"></script>
+  <script src="src/app.js"></script>
+</body>
+</html>
