@@ -338,9 +338,17 @@ mksquashfs "${CHROOT_DIR}" "${IMAGE_DIR}/live/filesystem.squashfs" -comp xz -e b
 echo -e "${CYAN}Gerando imagem ISO híbrida bootável: ${OUTPUT_DIR}/${ISO_NAME}...${NC}"
 grub-mkrescue -o "${OUTPUT_DIR}/${ISO_NAME}" "${IMAGE_DIR}"
 
+# Ajustar permissões para o usuário não-root original se invocado via sudo
+if [ -n "${SUDO_USER:-}" ]; then
+  REAL_GROUP="$(id -gn "$SUDO_USER" 2>/dev/null || echo "$SUDO_USER")"
+  chown -R "${SUDO_USER}:${REAL_GROUP}" "${OUTPUT_DIR}"
+  chmod -R u+rw "${OUTPUT_DIR}"
+fi
+
 echo -e "${GREEN}======================================================${NC}"
 echo -e "${GREEN}  🎉 ISO DO GIO Os COMPILADA COM SUCESSO!              ${NC}"
 echo -e "${GREEN}  Arquivo: ${OUTPUT_DIR}/${ISO_NAME}                    ${NC}"
 echo -e "${GREEN}======================================================${NC}"
 echo -e "${YELLOW}Para gravar em um pendrive USB e dar boot no computador:${NC}"
 echo -e "  sudo dd if=\"${OUTPUT_DIR}/${ISO_NAME}\" of=/dev/sdX bs=4M status=progress oflag=sync"
+
